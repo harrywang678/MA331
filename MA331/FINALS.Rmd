@@ -1,0 +1,150 @@
+---
+title: "FINALS"
+author: "Harry Wang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+### Q1
+```{r}
+library(readxl)
+pabmi = read_xls("./pabmi.xls")
+library(knitr)
+```
+
+```{r}
+with(pabmi,cor(PA,BMI))
+with(pabmi,cor.test(PA,BMI))
+```
+The p-value for testing the null hypothesis $H_0: p(X,Y) = 0$ is 7.503e-05 , which is less than the significance level $\alpha = 0.05$. This result allows us to reject the null hypothesis, indicating that the correlation between PA and BMI is statistically significant and not zero.
+
+### Q2
+
+
+```{r}
+fm1 = lm(PA ~ BMI, data = pabmi)
+
+par(mfrow=c(1,2))
+plot(residuals.lm(fm1),main="Residual Plot")
+abline(0,0,col="red")
+
+par(mfrow=c(1,2))
+qqnorm(residuals(fm1),main="QQ Plot")
+abline(0,2, col="red")
+```
+
+From the residual plot, it appears that the residuals are randomly dispersed around the horizontal line at zero, which suggests that the linear model may be appropriate. The normal Q-Q plot shows that the residuals roughly follow a straight line, indicating that they are approximately normally distributed. This supports the assumption of normality in the linear regression model.Overall, the current regression model seems to be a good fit for the data based on these 
+
+
+
+### Q3
+
+```{r}
+model <- lm(BMI ~ PA, data = pabmi)
+summary_model <- summary(model)
+intercept <- coef(model)[1]
+slope <- coef(model)[2]
+print(paste("Intercept (beta_0):", intercept))
+print(paste("Slope (beta_1):", slope))
+cat("Regression Equation: BMI = 29.578 - 0.655 x PA")
+plot(pabmi$PA, pabmi$BMI, main = "BMI vs PA", xlab = "Physical Activity (PA)", ylab = "Body Mass Index (BMI)", pch = 19, col = "blue")
+abline(model, col = "red", lwd = 2)
+```
+
+
+### Q4
+```{r}
+print(summary_model)
+```
+
+The hypothesis test for the slope parameter in the regression model of BMI as a function of PA yields a p-value of 7.5e-05, which is significantly less than the conventional alpha level of 0.05. This indicates strong statistical evidence to reject the null hypothesis that the slope is zero. Therefore, we conclude that there is a significant negative relationship between PA (Physical Activity) and BMI (Body Mass Index), suggesting that increases in PA are associated with decreases in BMI.
+
+### Q5
+```{r}
+conf_interval <- confint(model, "PA", level = 0.95)
+print(conf_interval)
+```
+
+### Q6
+```{r}
+kable(anova(fm1))
+
+```
+
+
+### Q7
+```{r}
+anova_results <- anova(model)
+r_squared <- summary_model$r.squared
+ssm <- anova_results$"Sum Sq"[1]
+sst <- ssm + anova_results$"Sum Sq"[2]
+print(paste("R-squared: ", r_squared))
+print(paste("SSM (Sum of Squares Model): ", ssm))
+print(paste("SST (Total Sum of Squares): ", sst))
+```
+
+### Q8
+```{r}
+# New data for prediction
+new_data <- data.frame(PA = 27.85)
+
+# Predict the expected value of Y and the confidence interval
+predictions <- predict(model, newdata = new_data, interval = "confidence", level = 0.95)
+print(predictions)
+```
+
+
+### Q9 
+```{r}
+observation = data.frame(PA = 31.25)
+predict(model,newdata=observation,interval="prediction",level=0.9)
+```
+
+
+### Q10
+
+```{r}
+fm2= lm(BMI ~ poly(PA,2), data=pabmi)
+summary(fm2)
+```
+### Q11
+
+```{r}
+# Fit the linear model
+linear_model <- lm(BMI ~ PA, data = pabmi)
+
+# Fit the second-degree polynomial model
+poly_model <- lm(BMI ~ PA + I(PA^2), data = pabmi)
+
+# Create a sequence of PA values for predictions
+pa_values <- seq(min(pabmi$PA), max(pabmi$PA), length.out = 300)
+# Predict BMI for linear model
+predicted_bmi_linear <- predict(linear_model, newdata = data.frame(PA = pa_values))
+
+# Predict BMI for polynomial model
+predicted_bmi_poly <- predict(poly_model, newdata = data.frame(PA = pa_values))
+# Plot the original data points
+plot(pabmi$PA, pabmi$BMI, main = "BMI vs PA with Regression Line and Polynomial",
+     xlab = "PA", ylab = "BMI", pch = 19, col = "blue")
+
+# Add the linear regression line
+lines(pa_values, predicted_bmi_linear, col = "red", lwd = 2)
+
+# Add the second-degree polynomial regression line
+lines(pa_values, predicted_bmi_poly, col = "green", lwd = 2, lty = 2)
+
+# Add a legend
+legend("topright", legend = c("Data Points", "Linear Regression", "Polynomial Regression"),
+       col = c("blue", "red", "green"), lty = 1:2, cex = 0.8, pch = c(19, NA, NA), lwd = 2)
+```
+
+### Q12
+
+$Y = \begin{bmatrix}
+y_1 \\
+y_2 \\
+\vdots \\
+y_n
+\end{bmatrix}$
+

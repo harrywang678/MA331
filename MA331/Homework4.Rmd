@@ -1,0 +1,112 @@
+---
+title: "Homework 4"
+author: "Harry Wang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+**Problem 2**
+
+```{r}
+set.seed(2)
+z <- rnorm(n=29, mean=0, sd=2)
+x = c(41.5,50.7,36.6,37.3,34.2,45,48,43.2,47.7,42.2,43.2,44.6,48.4,46.4,46.8,39.2,37.3,43.5,44.3,43.3,35.8,33.9,40.1,41.3,37.7,39.6,42.4,41.7,35.7)
+y = z + x
+t.test(x, y, alternative = c("two.sided"),paired = FALSE)
+```
+
+**Part i**
+
+Expectation of X: E[X] = E[x1 + x2 + ....+ xn] = E[x1] + E[x2] + ... E[xn]  
+Expectation of Y: E[Y] = E[y1 + y2 + ....+ yn] = E[x1+z1] + E[x2+z2] + ... E[xn+zn]  
+Since E[zi] = 0 for all i (Z - N(0,4)) we can simplify as E[Y] is equal to E[X]  
+
+```{r, echo=FALSE}
+cat("Due to rnorm being slightly off, the mean can be a little off as well.")  
+cat("Mean of X:",mean(x))  
+cat("Mean of Y:",mean(y))  
+```
+
+**Part ii**
+
+Null Hypothesis (H0): The expectations of X and Y are equal, i.e., E[X] = E[Y].  
+Alternative Hypothesis 1 (Ha1): The expectation of Y is greater than X, i.e.,E[Y] > E[X].  
+Alternative Hypothesis 2 (Ha2): The expectation of Y is less than X, i.e., E[Y] < E[X].  
+Alternative Hypothesis 3 (Ha3): The expectations of X and Y are not equal, i.e., E[Y] != E[X].  
+
+**Part iii**  
+
+Formula: 
+
+*Two Tailed Test: Ha3 E[Y] != E[X]*  
+
+```{r}
+meanx <- (mean(x))
+meany <- (mean(y))
+varx <- (var(x))
+vary <- (var(y))
+n = length(x)
+t = (meanx - meany) / (sqrt((varx/n) + (vary/n)))
+df = (((varx + vary)/n)^2) / ((((varx/n)^2) + ((vary/n)^2))/(n-1))
+df
+```
+```{r, echo=FALSE}
+cat("Using the formula, we found that the t value is:", t)
+cat("Using the formula, we found that the df value is:", df)
+cat("Finding this on the T-table, we found that using the significance level of 0.05 and the t and df values, the p-value is 0.729931")
+```
+
+*Left Tailed Test: Ha2 E[Y] < E[X]*
+
+```{r, echo=FALSE}
+cat("Using the formula, we found that the t value is:", t)
+cat("Using the formula, we found that the df value is:", df)
+cat("Finding this on the T-table, we found that using the significance level of 0.05 and the t and df values, the p-value is 0.3649655, which is half of the two tailed test. ")
+```
+
+*Right Tailed Test: Ha1 E[Y] > E[X]*  
+
+```{r, echo=FALSE}
+cat("Using the formula, we found that the t value is:", t)
+cat("Using the formula, we found that the df value is:", df)
+cat("Finding this on the T-table, we found that using the significance level of 0.05 and the t and df values, the p-value is 0.6350345, which is 1 - 0.3649655.")
+```
+
+
+Function:  
+
+*Two Tailed Test: Ha3 E[Y] != E[X]*  
+
+```{r}
+t.test(x, y, alternative = c("two.sided"),paired = FALSE)
+```
+```{r, echo=FALSE}
+cat("The p value is 0.7292 which is a lot higher than α = 0.05. This shows that there is a strong probability that the observed data could have occurred under the null hypothesis. In this context, the null hypothesis is that there is no true difference in means between the two populations from which the samples X and Y were drawn.")
+```
+
+*Left Tailed Test: Ha2 E[Y] < E[X]*
+
+```{r}
+t.test(x, y, alternative = c("less"),paired = FALSE)
+```
+```{r,echo=FALSE}
+cat("The p value is 0.3646 which is a lot higher than α = 0.05. This shows that there is a strong probability that the observed data could have occurred under the null hypothesis. In this context, the null hypothesis is that there is no true difference in means between the two populations from which the samples X and Y were drawn.")
+```
+
+*Right Tailed Test: Ha1 E[Y] > E[X]*  
+
+```{r}
+t.test(x, y, alternative = c("greater"),paired = FALSE)
+```
+```{r,echo=FALSE}
+cat("The p value is 0.6354 which is a lot higher than α = 0.05. This shows that there is a strong probability that the observed data could have occurred under the null hypothesis. In this context, the null hypothesis is that there is no true difference in means between the two populations from which the samples X and Y were drawn.")
+```
+
+**Problem 3**
+
+*Part iii*
+
+The shortcomings of the testing procedure refer to potential limitations or issues that might affect the accuracy or applicability of the hypothesis testing results. In this context, the main shortcoming is related to the assumption of a binomial distribution, which is based on the idea that each trial (or observation) is independent of the others and that there are only two possible outcomes (success or failure). In many cases, observations are not completely independent. For example, MPG values could be influenced by factors such as car model, engine type, and driving conditions, which might introduce a correlation between observations. The binomial test assumes that the data follow a binomial distribution, which might not be the case for all datasets. If the underlying distribution of the data is significantly different from a binomial distribution, the results of the binomial test might not be accurate.
+
+
+

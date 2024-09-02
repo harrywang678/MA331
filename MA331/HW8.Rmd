@@ -1,0 +1,249 @@
+---
+title: "MA 331 HW 8"
+author: "Amane Chibana"
+date: "2024-04-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(ggplot2)
+library(tidyverse)
+library(broom)
+```
+
+### 10.32
+
+#### a)
+```{r}
+data = read_excel("./IBI.xls")
+
+data <- data.frame(data)
+data$ibi <- as.factor(data$IBI)
+summary(data$IBI)
+length(data$IBI)
+sd(data$IBI)
+var(data$IBI)
+
+hist(data$IBI,xlab ="Index of Biotic Integrity")
+```
+
+```{r}
+data$area <- as.factor(data$Area)
+summary(data$Area)
+length(data$Area)
+sd(data$Area)
+var(data$Area)
+
+hist(data$Area,xlab="Watershed Area (km2)")
+```
+
+
+#### b)
+
+```{r}
+plot(data$IBI,data$Area,xlab = "IBI", ylab="Area")
+```
+
+There is a very general increasing trend between IBI and Area. It is overall very scattered and there are no definite outliers in the plot. 
+
+#### c)
+
+$y_i = \beta_0 + \beta_1 x_i + \epsilon_i$  
+$\text{IBM}_i = \beta_0 + \beta_1 \text{Area}_i + \epsilon_i\ $
+
+
+#### d)
+
+$H_0: \beta_1 = 0$ There is no linear association of Area and the IBI. 
+
+$H_a: \beta_1 \ne 0$ There is a linear association of Area and the IBI 
+
+#### e)
+
+```{r}
+regsum = lm(IBI ~ Area, data=data);summary(regsum)
+```
+
+#### f)
+```{r}
+res = resid(regsum)
+
+resarea = plot(data$Area,res);resarea
+abline(0,0)
+```
+
+The plot does not show any clear pattern and is scattered. There is nothing unusual in the plot.
+
+#### g)
+
+```{r}
+qqnorm(res)
+qqline(res)
+```
+
+In the Q-Q plot the residuals mostly follow the qqline meaning that the residuals are normally distributed. 
+
+#### h)
+The assumptions for the analysis of these data using the model I gave in part (c) appear to be reasonable because the data observed in each part seem reasonable. The regression analysis, the normality of the residuals, the residual plot show regular/reasonable results for our model. 
+
+
+### 10.33
+
+#### a)
+```{r}
+data$ibi <- as.factor(data$IBI)
+summary(data$IBI)
+length(data$IBI)
+sd(data$IBI)
+var(data$IBI)
+
+hist(data$IBI,xlab ="Index of Biotic Integrity")
+```
+
+```{r}
+data$area <- as.factor(data$Forest)
+summary(data$Forest)
+length(data$Forest)
+sd(data$Forest)
+var(data$Forest)
+
+hist(data$Forest,xlab="Forest")
+```
+
+
+#### b)
+```{r}
+plot(data$IBI,data$Forest,xlab = "IBI", ylab="Forest")
+```
+
+There is a general decreasing trend but it also has an outlier at (54,79)
+
+#### c)
+
+$y_i = \beta_0 + \beta_1 x_i + \epsilon_i$  
+$\text{IBI}_i = \beta_0 + \beta_1 \text{Forest}_i + \epsilon_i\ $
+
+
+#### d)
+
+$H_0: \beta_1 = 0$ There is no linear association of IBI and the Forest. 
+
+$H_a: \beta_1 \ne 0$ There is a linear association of IBI and the Forest.
+
+#### e)
+
+```{r}
+regsum2 = lm(IBI ~ Forest, data=data);summary(regsum2)
+```
+
+#### f)
+```{r}
+res2 = resid(regsum2)
+
+resarea2 = plot(data$Forest,res2);resarea2
+abline(0,0)
+```
+
+The possibly unusual point could be at (80,30). Its not very far out to be a definite outlier but it slightly different compared to the rest of the graph. 
+
+#### g)
+```{r}
+qqnorm(res2)
+qqline(res2)
+```
+
+In the Q-Q plot the residuals mostly follow the qqline meaning that the residuals are normally distributed. 
+
+#### h)
+
+The assumptions for the analysis of these data seem reasonable as the tests we did returned good results. The Q-Q plot showed the normality of the residuals and the scatter plot was also mainly scattered. 
+
+### 10.34
+
+Analysis from Exercise 10.32 (Area as Explanatory Variable for IBI)  
+Model: $IBM_i = \beta_0 + \beta_1 \text{Area}_i + \epsilon_i$  
+R-squared: 0.1988, indicating that approximately 19.9% of the variability in IBI is explained by the area.  
+Coefficient for Area: with a standard error of 0.1347, suggesting a positive but weak relationship.  
+P-value for Area: 0.001322, indicating a statistically significant relationship.  
+Intercept: 52.9230
+
+
+Analysis from Exercise 10.33 (Area as Explanatory Variable)  
+Model: $IBM_i = \beta_0 + \beta_1 \text{Forest}_i + \epsilon_i$  
+R-squared: 0.073, indicating that about 7.3% of the variability in IBI is explained by the percent forest.  
+Coefficient for Forest:  with a standard error of 0.080, suggesting a positive but weak relationship.  
+P-value for Forest: 0.061, marginally significant.  
+Intercept: 59.9072  
+
+Based on the available analysis, Area would be the preferred explanatory variable over Forest.  
+
+The relationship between Area and IBI is statistically significant, providing more confidence in the model. Area explains a higher proportion of the variability in IBI, making it a more effective predictor. While both variables are ecologically relevant, the significant relationship with Area might reflect broader environmental impacts affecting IBI, such as land use changes or watershed management practices.
+
+
+### 10.35
+
+## 
+
+```{r}
+ibi_data <- read_excel("IBI.xls")
+
+ibi_data_exp1 <- ibi_data
+ibi_data_exp1$IBI[ibi_data_exp1$Forest == 0] <- 0.0
+
+model_exp1 <- lm(IBI ~ Forest, data = ibi_data_exp1)
+summary(model_exp1)
+
+residuals_plot_exp1 <- ggplot(ibi_data_exp1, aes(x = Forest, y = residuals(model_exp1))) +
+  geom_point() +
+  geom_smooth(method = "loess", col = "red") +
+  labs(title = "Residuals vs. Forest (Experiment 1)", x = "Forest (%)", y = "Residuals")
+print(residuals_plot_exp1)
+
+shapiro.test(residuals(model_exp1))
+```
+
+```{r}
+# Clone the original data for modification
+ibi_data_exp2 <- ibi_data
+ibi_data_exp2$IBI[ibi_data_exp2$Forest == 100] <- 0.0
+
+# Perform linear regression
+model_exp2 <- lm(IBI ~ Forest, data = ibi_data_exp2)
+summary(model_exp2)
+
+# Plot residuals
+residuals_plot_exp2 <- ggplot(ibi_data_exp2, aes(x = Forest, y = residuals(model_exp2))) +
+  geom_point() +
+  geom_smooth(method = "loess", col = "red") +
+  labs(title = "Residuals vs. Forest (Experiment 2)", x = "Forest (%)", y = "Residuals")
+print(residuals_plot_exp2)
+
+# Normality test of residuals
+shapiro.test(residuals(model_exp2))
+```
+
+Experiment 1 (0% Forest): The model shows a significant relationship between Forest and IBI. The positive coefficient indicates that as the percentage of forest increases, so does the IBI, which is significant in this model configuration.  
+
+Experiment 2 (100% Forest): The model does not show a significant relationship, and the negative coefficient suggests a decrease in IBI with an increase in forest coverage, though this is not statistically significant.
+
+
+### 10.36
+
+```{r}
+ibi_data <- read_excel("IBI.xls")
+model_area <- lm(IBI ~ Area, data = ibi_data)
+new_data <- data.frame(Area = 40)
+conf_int <- predict(model_area, newdata = new_data, interval = "confidence")
+print(conf_int)
+pred_int <- predict(model_area, newdata = new_data, interval = "prediction")
+print(pred_int)
+```
+
+(c) Interpretation of the Intervals  
+The confidence interval provides a range where we expect the average IBI for all streams with an area of 40 km² to fall, indicating a generally moderate to good biotic integrity based on the IBI scale. The prediction interval, being wider, reflects the uncertainty when predicting an individual stream's IBI at this area size. It suggests that while the average stream might have moderate to good biotic integrity, individual streams could vary significantly, possibly due to local environmental factors not captured by area alone.
+
+(d) Applicability to Other Streams  
+These results are specific to Ozark Highland streams and are based on the particular environmental and biological interactions in this region. Applying these results to other streams in Arkansas or other states might not be appropriate without considering regional differences in ecology, pollution levels, land use, and other environmental factors that could affect IBI. Each region may have different baseline conditions and responses to environmental pressures, so local calibration of the model would be necessary for accurate predictions elsewhere.
+

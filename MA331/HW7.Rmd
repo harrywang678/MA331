@@ -1,0 +1,156 @@
+---
+title: "HW7"
+author: "Amane Chibana and Harry Wang"
+date: "2024-04-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(knitr)
+library (readxl)
+```
+
+### Q1
+
+```{r}
+Organic = read_excel("./Organic.xls")
+
+OrgGrp = Organic[which(Organic$Food=="Organic"), "Score"]
+
+ConGrp = Organic[which(Organic$Food=="Control"), "Score"]
+
+ComGrp = Organic[which(Organic$Food=="Comfort"), "Score"]
+
+length(OrgGrp$Score);mean(OrgGrp$Score);var(OrgGrp$Score)
+
+length(ConGrp$Score);mean(ConGrp$Score);var(ConGrp$Score)
+
+length(ComGrp$Score);mean(ComGrp$Score);var(ConGrp$Score)
+
+boxplot(c(OrgGrp,ConGrp,ComGrp), horizontal = TRUE,names = c("Organic", "Control","Comfort"))
+```
+
+### Q2
+
+```{r}
+var.test(ConGrp$Score,ComGrp$Score, alternative = c("two.sided"),conf.level=0.95)
+```
+H0: The population variance of Control and Comfort groups are equal 
+
+Ha: The population variance of Control and Comfort groups are not equal
+
+The testing statistic is F = 1.18 with numerator degree of freedom of 19 and denominator degree of freedom of 21. The p-value of this test is 0.71 which is greater than 0.05 which means we fail to reject the null hypothesis and we lack the evidence to say that the variance of the Control and Comfort groups are not equal at significance level α1 = 0.05. 
+
+### Q3
+
+```{r}
+t.test(ConGrp$Score,ComGrp$Score, alternative = c("two.sided"),paired = FALSE, var.equal = FALSE, conf.level = 0.99)
+```
+
+H0: The population means of Control and Comfort groups are equal
+Ha: The population means of Control and Comfort groups are not equal
+
+The testing statistic is t=1.055 with degree of freedom 38. The p-value of this test is 0.298 which is grater than 0.01 which means we fail to reject the null hypothesis and we lack the evidence to say that the mean of the Control and Comfort groups are not equal at significance level α2 = 0.01. 
+
+### Q4 
+
+```{r}
+TotalAvg = (sum(OrgGrp$Score)+sum(ConGrp$Score) + sum(ComGrp$Score))/(length(OrgGrp$Score)+length(ConGrp$Score)+length(ComGrp$Score))
+
+data <- data.frame(
+  score = c(ConGrp$Score, ComGrp$Score, OrgGrp$Score),
+  group = factor(c(rep("Control", length(ConGrp$Score)), 
+                   rep("Comfort", length(ComGrp$Score)), 
+                   rep("Organic", length(OrgGrp$Score))))
+)
+
+anova_result <- aov(score ~ group, data = data)
+
+OrganicAvg = mean(OrgGrp$Score)
+ControlAvg = mean(ConGrp$Score)
+ComfortAvg = mean(ComGrp$Score)
+
+OrganicVar = var(OrgGrp$Score)
+ControlVar = var(ConGrp$Score)
+ComfortVar = var(ComGrp$Score)
+
+SSB = (length(OrgGrp$Score)*(OrganicAvg-TotalAvg)^2)+(length(ConGrp$Score)*(ControlAvg-TotalAvg)^2)+(length(ComGrp$Score)*(ComfortAvg-TotalAvg)^2)
+SSE = (length(OrgGrp$Score) - 1)*OrganicVar + (length(ConGrp$Score) - 1)*ControlVar + (length(ComGrp$Score) - 1)*ComfortVar 
+SST = SSB+SSE 
+
+r_squared <- SSB / SST
+```
+
+```{r echo = FALSE}
+cat("Total Average:", TotalAvg)
+cat("Organic Average:", OrganicAvg)
+cat("Control Average:", OrganicAvg)
+cat("Comfort Average:", OrganicAvg)
+cat("Organic Variance:", OrganicVar)
+cat("Control Variance:", ControlVar)
+cat("Comfort Variance:", ComfortVar)
+cat("SSB:", SSB)
+cat("SSE", SSE)
+cat("SST", SST)
+cat("ANOVA Results:\n")
+print(summary(anova_result))
+cat("R-squared:", r_squared, "\n")
+```
+
+### Q5
+
+Null Hypothesis (H0): The mean score of the Control group is equal to or less than the average of the Organic and Comfort groups.
+Alternative Hypothesis (H1): The mean score of the Control group is greater than the average of the Organic and Comfort groups.
+
+```{r}
+mean_organic <- mean(OrgGrp$Score)
+mean_control <- mean(ConGrp$Score)
+mean_comfort <- mean(ComGrp$Score)
+
+mean_organic_comfort <- (mean_organic + mean_comfort) / 2
+
+contrast <- mean_control - mean_organic_comfort
+
+pooled_sd <- sqrt(((var(OrgGrp$Score) / length(OrgGrp$Score)) + (var(ConGrp$Score) / length(ConGrp$Score)) + (var(ComGrp$Score) / length(ComGrp$Score))) / 3)
+
+se_contrast <- pooled_sd * sqrt((1/length(ConGrp$Score)) + (0.5/length(OrgGrp$Score)) + (0.5/length(ComGrp$Score)))
+
+t_statistic <- contrast / se_contrast
+
+df <- (se_contrast^4) / (((var(OrgGrp$Score) / length(OrgGrp$Score))^2 / (length(OrgGrp$Score) - 1)) + ((var(ConGrp$Score) / length(ConGrp$Score))^2 / (length(ConGrp$Score) - 1)) + ((var(ComGrp$Score) / length(ComGrp$Score))^2 / (length(ComGrp$Score) - 1)))
+
+p_value <- pt(-abs(t_statistic), df)
+```
+```{r, echo = FALSE}
+
+# Output results
+cat("Contrast: ", contrast, "\n")
+cat("T-statistic: ", t_statistic, "\n")
+cat("Degrees of Freedom: ", df, "\n")
+cat("P-value: ", p_value, "\n")
+```
+
+There is not sufficient evidence at the  significance level 0.1 to conclude that the Control group's mean score is higher than the average of the Organic and Comfort groups. In fact, the data suggests the opposite.
+
+
+### Q6
+
+```{r}
+
+library(agricolae)
+
+group <- c(rep('Organic', 20), rep('Control', 20), rep('Comfort', 22))
+score <- c(4.83, 5.50, 6.33, 6.33, 5.67, 6.17, 5.50, 5.00, 5.00, 6.33, 6.17, 4.83, 4.67, 5.50, 5.83, 4.67, 6.17, 5.33, 6.17, 5.67,
+           5.33, 5.67, 5.33, 5.17, 5.67, 5.67, 3.83, 5.33, 4.67, 4.83, 5.33, 3.83, 5.33, 5.33, 4.33, 5.50, 5.17, 6.17, 4.83, 4.33,
+           5.83, 5.00, 6.00, 5.00, 4.17, 4.67, 5.17, 5.50, 4.67, 4.50, 5.17, 5.17, 4.50, 4.67, 4.83, 5.83, 5.17, 4.33, 4.67, 4.33, 4.67, 3.67)
+
+data <- data.frame(group, score)
+
+model <- aov(score ~ group, data = data)
+lsd_test <- LSD.test(model, "group", p.adj = "none")
+
+lsd_test
+
+```
+No significant differences among the groups.

@@ -1,0 +1,190 @@
+---
+title: "Homework 2"
+author: "Harry Wang"
+output: 
+  html_document
+date: "2024-02-05"
+---
+
+**Problem 3:** 
+
+**Part i**
+
+```{r}
+x = c(0.5, 1.2, -0.5, 0.9, -0.7, 1.5, -1, 2.5, 3.25, -1.6, 0.2, 2.75)
+mu = 1
+sigma_squared = 2
+a = sum((x - mu)^2) / sigma_squared
+n = length(x)
+df = n - 1
+probabilitya = pchisq(a, df, lower.tail = TRUE)
+
+```
+
+``` {r echo = FALSE}
+
+cat("The value of a is:", a, "\n")
+cat("The distribution of the static is a chi-square distritubtion.")
+cat("The probability is:", probabilitya, "\n")
+```
+
+**Part ii**
+```{r}
+x_bar = mean(x)
+x_bar
+b = sum((x-x_bar)^2) / sigma_squared
+probabilityb = pchisq(b,df,lower.tail = TRUE)
+
+```
+
+``` {r echo = FALSE}
+
+cat("The value of b is:", b, "\n")
+cat("The distribution of the static is a chi-square distritubtion.")
+cat("The probability is:", probabilityb, "\n")
+```
+
+**Part iii**
+
+```{r}
+s_squared = var(x)
+c = (x_bar - mu) / sqrt(s_squared/n)
+probabilityc = pt(c,df)
+probabilityc
+```
+
+``` {r echo = FALSE}
+
+cat("The value of c is:", c, "\n")
+cat("The distribution of the static is a Student’s T distribution.")
+cat("The probability is:", probabilityc, "\n")
+```
+
+**Problem 4:**
+
+**Part i**
+```{r}
+P_X = pnorm(1,-1,2) - pnorm(0,-1,2)
+P_Y = pchisq(13,10) - pchisq(2,10)
+P_T = pt(2,11) - pt(0,11)
+P_F = pf(3,8,11) - pf(1,8,11)
+```
+
+``` {r echo = FALSE}
+
+cat("The value of P(X ∈ (0, 1)) is:", P_X , "\n")
+cat("The value of P(Y ∈ (2, 13)) is:", P_Y , "\n")
+cat("The value of P(T ∈ (0, 2)) is:", P_T , "\n")
+cat("The value of P(F ∈ (1, 3)) is:", P_F , "\n")
+
+```
+
+**Part ii**
+```{r}
+alpha = 0.05
+X_quant1 = qnorm(alpha/2,-1,2)
+X_quant2 = qnorm(alpha,-1,2)
+X_quant3 = qnorm(1-alpha,-1,2)
+X_quant4 = qnorm(1 - alpha/2,-1,2)
+
+Y_quant1 = qchisq(alpha/2,10)
+Y_quant2 = qchisq(alpha,10)
+Y_quant3 = qchisq(1 - alpha,10)
+Y_quant4 = qchisq(1 - alpha/2,10)
+
+T_quant1 = qt(alpha/2,11)
+T_quant2 = qt(alpha,11)
+T_quant3 = qt(1-alpha,11)
+T_quant4 = qt(1-alpha/2,11)
+
+F_quant1 = qf(alpha/2,8,11)
+F_quant2 = qf(alpha,8,11)
+F_quant3 = qf(1 -alpha,8,11)
+F_quant4 = qf(1-alpha/2,8,11)
+```
+
+```{r, echo = FALSE}
+cat("The value of α/2 for X is:", X_quant1 , "\n")
+cat("The value of α for X is:", X_quant2 , "\n")
+cat("The value of 1 - α for X is:", X_quant3 , "\n")
+cat("The value of 1 - α/2 for X is:", X_quant4 , "\n")
+
+cat("The value of α/2 for Y is:", Y_quant1 , "\n")
+cat("The value of α for Y is:", Y_quant2 , "\n")
+cat("The value of 1 - α for Y is:", Y_quant3 , "\n")
+cat("The value of 1 - α/2 for Y is:", Y_quant4 , "\n")
+
+cat("The value of α/2 for T is:", T_quant1 , "\n")
+cat("The value of α for T is:", T_quant2 , "\n")
+cat("The value of 1 - α for T is:", T_quant3 , "\n")
+cat("The value of 1 - α/2 for T is:", T_quant4 , "\n")
+
+cat("The value of α/2 for F is:", F_quant1 , "\n")
+cat("The value of α for F is:", F_quant2 , "\n")
+cat("The value of 1 - α for F is:", F_quant3 , "\n")
+cat("The value of 1 - α/2 for F is:", F_quant4 , "\n")
+
+```
+
+**Problem 5:** 
+
+**Part i**
+
+**E[N] = np**
+
+The expectation of a Binomially distributed random variable can be derived from the sum of expectations of individual Bernoulli trials. Since each trial has a success probability p, the expected value of each trial is p. For n trials, the total expected value is:
+
+E[N] = E[X1 + X2 + X3 + ..... + XN] = E[X1] + E[X2] + E[X3] + ... + E[N] = np
+
+E[N] = $\sum_{k=0}^{n} k * (n,k) p^k(1-p) ^ (n-k)$ = np $\sum_{k=1}^{n} p^(k-1) * (nk) p^(k-1) (1-p) ^ (n-k)-(k-1)$ 
+
+$p+(1-p)^(n-1) = 1$ This is (1-p) to the (n-1) power
+
+$\sum_{k=1}^{n} p^(k-1) * (nk) p^(k-1) (1-p) ^ (n-k)-(k-1)$ = $E[N] = np$
+
+This result aligns with our initial definition of E[N] for a binomial distribution, achieved through a process analogous to integration, focusing on the summation of discrete probabilities.
+
+**Var[N] = np(1-p)**
+
+The variance of a binomially distributed random variable is given by the formula Var[N] = np(1-p). This formula comes from the fact that variance measures the spread of the distribution around the mean (expected value), and in each trial, the probability of not succeeding (failure) is 1-p . Since the outcome of each trial is independent, the total variance is the product of the number of trials , the probability of success p , and the probability of failure 1-p.
+
+**Part ii*
+
+**E[T] = 0**
+
+The PDF of a Student's t-distribution with n degrees: 
+
+$f(t) = \frac{T}{sqrt(n*pi)*T*(n/2)} * (\frac{n+1}{2}) * (1+\frac{t^2}{n})^-\frac{n+1}{2}$
+
+The expected value of E[T] of a continuous random variable T is defined as:
+
+E[T] = $$\int_∞^∞ t*f(t) \, dt$$ (negative inf to inf)
+
+Symmetry of PDF: f(t) = f(-t) for all t.
+
+Expected Value Definition: E[T] = $$\int_∞^∞ t*f(t) \, dt$$ (negative inf to inf)
+
+Splitting the Integral:
+
+Positive side: $$\int_0^∞ t*f(t) \, dt$$
+
+Negative side: $$\int_∞^0 t*f(t) \, dt$$ (negative inf to 0)
+
+Symmetry Application: The positive and negative sides cancel out due to symmetry.
+
+Conclusion: E[T] = 0
+
+**−F −1(α) = F −1(1 − α)**
+
+Given: A symmetric distribution around zero, and its CDF F(x).
+
+Prove:  F −1(α) = F −1(1 − α)
+
+Let x = F^-1(α). This means F(x) = α,  the probability of the random variable being less than or equal to x is α .
+
+Due to the symmetry of the distribution, the value at -x will have the cumulative probability of 1 - α. F(-x) = 1 - α  
+
+Since F(-x) = 1 - α is the inverse CDF -x = F-1(1-α), and since x = F-1(α), we can sub and get -F −1(α) = F −1(1 − α).
+
+
+

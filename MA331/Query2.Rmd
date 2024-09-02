@@ -1,0 +1,88 @@
+---
+title: "Query2"
+author: "Amane Chibana and Harry Wang"
+date: "2024-04-04"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Q1: SSB
+
+$\sum_{i=1}^{k}\sum_{j=1}^{n_{i}}\left(X_{i}-\overline{X}\right)^{2}=\sum_{i=1}^{k}n_{i}\left(X_{i}-\overline{X}\right)^{2}$
+
+$SSB\ =\ \sum_{i=1}^{k}\sum_{j=1}^{n_{i}}\left(X_{i}-\overline{X}\right)^{2}$
+
+$SSB\ =\ \sum_{i=1}^{k}n_{i}\left(X_{i}-\overline{X}\right)^{2}$
+
+Since j is not used in the equation, the summation can be simplified to n. Which would verify the formula of SSB.
+
+
+### Q2: SSE
+
+$\sum_{i=1}^{k}\sum_{j=1}^{n_{i}}\left(X_{ij}-\overline{X}_{i}\right)^{2}=\sum_{i=1}^{k}\left(n_{i}-1\right)S_{i}^{2}$
+
+$SSE=\sum_{i=1}^{k}\sum_{j=1}^{n_{i}}\left(X_{ij}-\overline{X}_{i}\right)^{2}$
+
+$SSE=\sum_{i=1}^{k}\left(n_{i}-1\right)\frac{1}{\left(n_{i}-1\right)}\sum_{j=1}^{n}\left(X_{ij}-\overline{X}_{i}\right)^{2}$
+
+$SSE=\sum_{i=1}^{k}\left(n_{i}-1\right)S_{i}^{2}$
+
+Since the group sample variance is $S_{i}^{2}=\frac{1}{\left(n_{i}-1\right)}\sum_{j=1}^{n}\left(X_{ij}-\overline{X}_{i}\right)^{2}$ , when the $\frac{n_{i}-1}{n_{i}-1}$ is taken out it is possible to see the sample group variance equation inside SSE. Where then you can substitute $S_{i}^{2}$ verifying SSE.
+
+### Q3 
+
+For constants $a_{1}...a_{k}$ and sample contrast $C_{\psi}$, the corresponding contrast on the population r.v's are 
+
+<!-- This might be wrong might only need the first equation and prob dont need the hypothesis-->
+
+$\psi=a_{1}\mu_{1}+a_{2}\mu_{2}+...+a_{k}\mu_{k}$
+
+
+
+### Q4
+
+$E\left[C_{\psi}\right]$
+
+$E\left[\sum_{i=1}^{k}\ a_{i}\overline{X}_{i}\right]$
+
+$\sum_{i=1}^{k}E\left[a_{i}\overline{X}_{i}\right]$
+
+$\sum_{i=1}^{k}a_{i}E\left[\overline{X}_{i}\right]$
+
+$\sum_{i=1}^{k}a_{i}\mu_{i}\ =\ \psi$
+
+### Q5
+
+$Var\left(C_{\psi}\right)$ = $Var\left(a_{1}\overline{X}_{1},+...a_{k}\overline{X}_{k}\right)$
+
+$Var\left(a_{1}\overline{X}_{1},+...a_{k}\overline{X}_{k}\right)$ = $a_{1}^2Var\left(\overline{X}_{1}),+...(a_{k}^2\overline{X}_{k}\right)$
+
+$Var\left(\overline{X}_{i}\right)$ = $\frac{\sigma^2}{n_i}$
+
+$Var\left(C_{\psi}\right)$ = $a_1^2\frac{\sigma^2_1}{n_1} + a_2^2\frac{\sigma^2_2}{n_2} + ... a_k^2\frac{\sigma^2_k}{n_k}$
+
+### Q6
+
+$C_{\psi}$ = $a_1\overline{X}_1 + a_2\overline{X}_2 + ... a_k\overline{X}_k$  
+
+$\overline{X}_i . \sim N(\mu,\frac{\sigma^2_i}{n_i})$
+
+$E[C\psi] = a_1\mu_1 +a_2\mu_2 + ... a_k\mu_k$
+
+$Var\left(C_{\psi}\right)$ = $a_1^2\frac{\sigma^2_1}{n_1} + a_2^2\frac{\sigma^2_2}{n_2} + ... a_k^2\frac{\sigma^2_k}{n_k}$
+
+$C_\psi \sim N(E[C\psi], Var(C_\psi))$
+
+### Q7
+
+Since Z is a standard normal variable, $P(C\psi \ge 0)$ is equal to $P(Z \ge 0)$. The probability that a standard normal variable is greater than or equal to 0 is 0.5, because the standard normal distribution is symmetric around zero.
+
+Under the null hypothesis $H_0: \psi = 0$, the probability that the sample contrast $C_\psi$is greater than or equal to 0 is 0.5. This is because under $H_0$, $C_\psi$ is normally distributed with a mean of 0, and the standard normal distribution is symmetric, with exactly half of the distribution lying above zero.
+
+
+

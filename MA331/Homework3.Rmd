@@ -1,0 +1,97 @@
+---
+title: "Homework 3"
+author: "Harry Wang"
+date: "2024-02-20"
+output: html_document
+---
+
+**Problem 2**
+
+**Part: i**
+
+Confidence Level: 0.925
+
+The MPG data will be transformed into binary data where 1 represents MPG \> 40 and 0 represents MPG ≤ 40. The Bernoulli population random variable Y will be this binary representation.
+
+**Part: ii**\
+Formula:
+
+```{r}
+liz = c(41.5,50.7,36.6,37.3,34.2,45,48,43.2,47.7,42.2,43.2,44.6,48.4,46.4,46.8,39.2)
+lib= ifelse (liz > 40,1,0)
+conf = 0.925
+alpha = 1 - 0.925
+
+n = length(lib)
+phat = mean(lib)
+lp=phat+qnorm(alpha /2)* sqrt(phat *(1-phat ))/ sqrt(n)
+rp=phat+qnorm(1-alpha /2)* sqrt(phat *(1-phat ))/ sqrt(n)
+pinterval = c(lp,rp);           pinterval
+```
+
+R Function:
+
+```{r}
+prop.test(c(sum(lib), 0),c(n, n), conf.level = 1 - alpha , correct = FALSE)
+
+```
+
+**Part: iii**
+
+Formula:
+
+```{r}
+x = c(41.5,50.7,36.6,37.3,34.2,45,48,43.2,47.7,42.2,43.2,44.6,48.4,46.4,46.8,39.2,37.3,43.5,44.3,43.3,35.8,33.9,40.1,41.3,37.7,39.6,42.4,41.7,35.7)
+y = ifelse(x>40,1,0)
+conf = 0.925
+alpha = 1 - 0.925
+
+
+n = length(y)
+phat = mean(y)
+lp=phat+qnorm( alpha /2)* sqrt(phat *(1-phat ))/ sqrt(n)
+rp=phat+qnorm(1-alpha /2)* sqrt(phat *(1-phat ))/ sqrt(n)
+pinterval = c(lp,rp); pinterval
+
+```
+
+R Function:
+
+```{r}
+prop.test(sum(y),n,conf.level= 0.925,correct = TRUE)
+```
+
+**Part: iv**
+
+Margin of Error:
+
+```{r}
+liz = c(41.5,50.7,36.6,37.3,34.2,45,48,43.2,47.7,42.2,43.2,44.6,48.4,46.4,46.8,39.2)
+lib= ifelse (liz > 40,1,0)
+p = mean(lib)
+n = length(lib)
+conf_level = 0.925
+Z = qnorm(1 - (1 - conf_level) / 2)
+SE = sqrt(p * (1 - p) / n)
+MOE = Z * SE
+```
+
+```{r, echo=FALSE}
+cat("The margin of error of the first 16:", MOE)
+```
+
+```{r}
+liz = c(41.5,50.7,36.6,37.3,34.2,45,48,43.2,47.7,42.2,43.2,44.6,48.4,46.4,46.8,39.2,37.3,43.5,44.3,43.3,35.8,33.9,40.1,41.3,37.7,39.6,42.4,41.7,35.7)
+lib= ifelse (liz > 40,1,0)
+p = mean(lib)
+n = length(lib)
+conf_level = 0.925
+Z = qnorm(1 - (1 - conf_level) / 2)
+SE = sqrt(p * (1 - p) / n)
+MOE = Z * SE
+```
+
+```{r,echo = FALSE}
+cat("The margin of error of all observation:", MOE)
+cat("These margins of error indicate the range within which the true population proportion is expected to lie with a 92.5% confidence level. A smaller margin of error suggests a more precise estimate of the population proportion. In this case, the margin of error for all observations is smaller than that for the first 16 observations, indicating that using all observations provides a more accurate estimate of the population proportion of cars with MPG > 40.")
+```

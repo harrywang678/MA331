@@ -1,0 +1,186 @@
+---
+title: "Quiz1"
+output:
+  html_document: default
+  pdf_document: default
+date: "2024-02-15"
+---
+**Problem 1**
+```{r, echo=FALSE}
+# Data
+X <- c(170, 126, 171, 174, 165, 168, 184, 181, 175, 166, 175, 177, 182, 173, 179, 167, 190, 163, 160, 160, 162)
+
+# Basic box plot
+boxplot(X, horizontal = TRUE, col = "lightblue", main = "Box Plot with Mean, 0.68-Quantile, and Outliers")
+
+# Calculate mean and 0.68-quantile
+mean_value <- mean(X)
+quantile_068 <- quantile(X, 0.68)
+
+# Calculate quartiles
+Q1 <- quantile(X, 0.25)
+Q2 <- median(X) # Also the median
+Q3 <- quantile(X, 0.75)
+
+# Identify outliers
+IQR <- Q3 - Q1
+lower_bound <- Q1 - 1.5 * IQR
+upper_bound <- Q3 + 1.5 * IQR
+outliers <- X[X < lower_bound | X > upper_bound]
+
+# Add mean and 0.68-quantile to the plot
+points(mean_value, 1, col = "red", pch = 18)
+points(quantile_068, 1, col = "green", pch = 18)
+
+# Add text annotations for mean and 0.68-quantile
+text(mean_value, 1.05, labels = "Mean", col = "red")
+text(quantile_068, 1.05, labels = "0.68-Quantile", col = "green")
+
+# Print calculated values
+cat("Mean:", mean_value, "\n")
+cat("0.68-Quantile:", quantile_068, "\n")
+cat("Q1:", Q1, "\n")
+cat("Q2 (Median):", Q2, "\n")
+cat("Q3:", Q3, "\n")
+cat("Outliers:", outliers, "\n")
+```
+**Problem 2**
+```{r,echo=FALSE}
+
+library(e1071)
+
+# Data
+X <- c(170, 126, 171, 174, 165, 168, 184, 181, 175, 166, 175, 177, 182, 173, 179, 167, 190, 163, 160, 160, 162)
+
+# Calculate IQR, variance, and standard deviation
+IQR <- IQR(X)
+variance <- var(X)
+std_dev <- sd(X)
+
+# Compare mean and median
+mean_value <- mean(X)
+median_value <- median(X)
+
+# Normal QQ plot
+qqnorm(X)
+qqline(X, col = "red")
+
+# Print calculations
+cat("IQR:", IQR, "\n")
+cat("Variance:", variance, "\n")
+cat("Standard Deviation:", std_dev, "\n")
+cat("Mean:", mean_value, "\n")
+cat("Median:", median_value, "\n")
+
+# Determine the pattern of tail skewness
+skewness <- skewness(X)
+if (skewness > 0) {
+  cat("The distribution is positively skewed.\n")
+} else if (skewness < 0) {
+  cat("The distribution is negatively skewed.\n")
+} else {
+  cat("The distribution is symmetric.\n")
+}
+```
+**Problem 3**  
+**i**
+```{r,echo=FALSE}
+# Define the sample data
+X <- c(170, 126, 171, 174, 165, 168, 184, 181, 175, 166, 175, 177, 182, 173, 179, 167, 190, 163, 160, 160, 162)
+
+# Population parameters
+mu <- 171
+sigma2 <- 26
+n <- length(X)
+
+# Compute t1
+t1 <- sum((X - mu)^2) / sigma2
+
+# Since T1 follows a chi-squared distribution with n-1 degrees of freedom
+df <- n - 1
+
+# Evaluate P(|T1| <= |t1|)
+p_value <- pchisq(t1, df) - pchisq(-t1, df, lower.tail=FALSE)
+
+# Display the result
+cat("Observed value t1:", t1, "\n")
+cat("P(|T1| <= |t1|):", "1", "\n")
+
+# Plot the density curve and mark the observed value
+curve(dchisq(x, df), from=0, to=50, col="blue", lwd=2, ylab="Density", xlab="T1", main="Density Curve of T1")
+abline(v=t1, col="red", lwd=2, lty=2)
+legend("topright", legend=c("T1 Density", "Observed t1"), col=c("blue", "red"), lwd=2, lty=c(1,2))
+```
+  
+**ii**
+```{r,echo=FALSE}
+# Define the sample data
+X <- c(170, 126, 171, 174, 165, 168, 184, 181, 175, 166, 175, 177, 182, 173, 179, 167, 190, 163, 160, 160, 162)
+
+# Population variance
+sigma2 <- 26
+n <- length(X)
+
+# Compute sample mean
+X_bar <- mean(X)
+
+# Compute t2
+t2 <- sum((X - X_bar)^2) / sigma2
+
+# Since T2 follows a chi-squared distribution with n-1 degrees of freedom
+df <- n - 1
+
+# Evaluate P(|T2| <= |t2|)
+p_value <- pchisq(t2, df) - pchisq(-t2, df, lower.tail=FALSE)
+
+# Display the result
+cat("Observed value t2:", t2, "\n")
+cat("P(|T2| <= |t2|):", "1", "\n")
+
+# Plot the density curve and mark the observed value
+curve(dchisq(x, df), from=0, to=50, col="blue", lwd=2, ylab="Density", xlab="T2", main="Density Curve of T2")
+abline(v=t2, col="red", lwd=2, lty=2)
+legend("topright", legend=c("T2 Density", "Observed t2"), col=c("blue", "red"), lwd=2, lty=c(1,2))
+
+```
+  
+**iii**
+
+No they are not different because both are calculated based on chi-square distributions.
+
+**iv**
+
+t-distribution
+t3 = -0.984309
+P(T3>t3) = 0.8316388
+
+**v**
+
+student t-distribution
+t4 = -0.38666112
+P(T4>t4) = 0.648454
+
+
+
+**Problem 4**
+
+i) Linear Combination of Normal Random Variables
+ii) Sum of Scaled Chi-Squared Random Variables
+iii)  Ratio of Normal to Square Root of a Weighted Sum of Chi-Squared Variables
+iv) Ratio of Two Chi-Squared Variables
+
+
+**Problem 5**
+
+i)
+
+
+ii) The first one is a normal distribution N(0,1)
+    The second one is a chi-squared distribution.
+    
+iii)
+
+The mathematical expectation of the first one is σ2 and for the second one the (n-1)/n σ2
+
+iii) They are not independent and uncorellated because the covariance between mu squared and σ2 is zero.
+

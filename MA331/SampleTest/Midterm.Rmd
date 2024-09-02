@@ -1,0 +1,119 @@
+---
+title: "Midterm"
+author: "Harry Wang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+I pledge my honor that I have abided by the Stevens Honor System
+
+#### Problem 1:
+
+```{r}
+library(readxl)
+GpaGender = read_excel("./GpaGender.xls")
+n = length(GpaGender$SelfConcept)
+n
+significance = 0.05
+
+#males
+X = GpaGender[which(GpaGender$Gender == 2), "SelfConcept"]
+X
+male_summary = summary(X)
+male_summary
+
+#females
+Y = GpaGender[which(GpaGender$Gender == 1), "SelfConcept"]
+Y
+female_summary = summary(Y)
+female_summary
+
+```
+
+#### Problem 2:
+
+```{r}
+together = c(X,Y)
+together
+boxplot(together,horizontal = TRUE, names = c("males","females"))
+```
+
+#### Problem 3:
+
+```{r}
+t.test(X,conf.level = 0.95)
+```
+
+The 95% confidence interval for the true male population mean is 54.31 to 61.52.
+
+```{r}
+t.test(Y,conf.level = 0.95)
+```
+
+The 95% confidence interval for the true female population mean is 50.86 to 60.17.
+
+#### Problem 4:
+
+```{r}
+
+cat("The null hypothesis is H0 : σ2X = σ2Y")
+nx = length(X$SelfConcept)
+nx
+ny = length(Y$SelfConcept)
+ny
+var(X$SelfConcept)
+var(Y$SelfConcept)
+```
+
+The sample variance of sample X (male) is less than that of sample Y (female). So, I set my alternative hypothesis to be Ha : σ2X < σ2Y
+
+```{r}
+var.test(X$SelfConcept, Y$SelfConcept, ratio = 1, alternative = "less")
+
+```
+The testing statistic F is observed as f = 0.93
+
+The p-value 0.41 is not less than the significance level 0.05, so I fail to reject the null hypothesis, meaning that the
+male population Self Concept variance is equal to the female population Self Concept variance.
+
+#### Problem 5:
+
+The null hypothesis is H0 : μX = μY
+The alternative hypothesis is Ha : μX != μY
+
+```{r}
+t.test(X$SelfConcept,Y$SelfConcept, alternative = "two.sided", paired = FALSE, var.equal = TRUE)
+```
+
+The p-value 0.41 is not less than the significance level 0.05, so I fail to reject the null hypothesis, meaning
+that the male population Self Concept mean is equal to the female population Self Concept mean.
+
+#### Problem 6:
+
+The null hypothesis is H0 : p = 0.45
+The alternative hypothesis is Ha : p > 0.45
+
+```{r}
+bin = ifelse(GpaGender$SelfConcept > 50, 1 ,0)
+bin
+
+prop.test(sum(bin), length(bin), p = 0.45, alternative = "greater", correct = FALSE)
+```
+The p-value 1.876e-09 is less than the significance level 0.05, so I reject the null hypothesis, meaning that
+the population proportion is greater than 0.45.
+
+#### Problem 7:
+
+The null hypothesis is H0 : p1 = p2
+The alternative hypothesis is Ha : p1 !- p2       
+
+```{r}
+malebin = ifelse(X > 50, 1, 0)
+femalebin = ifelse(Y > 50,1,0)
+
+prop.test(c(sum(malebin),sum(femalebin)), c(length(malebin),length(femalebin)), alternative = "two.sided", correct = FALSE)
+```
+
+
+The p-value 0.4858 is greater than the significance level 0.05, so I fail to reject the null hypothesis, meaning that
+the two groups have the same population proportion of Self Concept through a two tailed test.

@@ -1,0 +1,151 @@
+---
+title: "HW5"
+author: "Amane Chibana and Harry Wang"
+date: "2024-03-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(BSDA)
+library(EnvStats)
+```
+
+
+### Question 1
+
+##### i)
+
+$\sigma_{1}^{2}\ =\ \sigma_{2}^{2}$ The two populations have equal variances
+
+$\sigma_{1}^{2}\ne\sigma_{2}^{2}$ The two populations do not have equal variances
+
+
+##### ii)
+
+```{r}
+organic = c(4.83,5.50,6.33,6.33,5.67,6.17,5.50,5.00,5.00,6.33,6.17,4.83,4.67,5.50,5.83,4.67,6.17,5.33,6.17,5.67)
+control = c(5.33,5.67,5.33,5.17,5.67,5.67,3.83,5.33,4.67,4.83,5.33,3.83,5.33,5.33,4.33,5.50,5.17,6.17,4.83,4.33)
+comfort = c(5.83,5.00,6.00,5.00,4.17,4.67,5.17,5.50,4.67,4.50,5.17,5.17,4.50,4.67,4.83,5.83,5.17,4.33,4.67,4.33,4.67,3.67)
+test_stat <- (sd(control)^2)/(sd(comfort)^2)
+n1 = length(control)
+n2 = length(comfort)
+```
+
+```{r, echo=FALSE}
+cat("Testing Statistic:\n")
+cat(test_stat, "\n")
+
+cat("The null distribution is a F distribution of with degree of freedom ", n1-1, " (# of control - 1) and ", n2-1, " (# of comfort - 1)")
+```
+
+##### iii)
+
+```{r}
+var.test(control ,comfort , ratio =1,alternative =c("two.sided"))
+```
+
+```{r,echo=FALSE}
+cat("We fail to reject the null hypothesis because the p-value is greater than the significance value of 0.05.")
+```
+
+##### iv)
+
+```{r,echo=FALSE}
+cat("This means that we lack the evidence to conclude that the null hypothesis is invalid. It does not confirm that the null hypothesis is true but there is a lack of evidence to say that the populations have different variances.")
+```
+
+### Question 2
+
+
+##### i)
+
+$\sigma_{1}^{2}\ =\ \sigma_{2}^{2}$ The two populations have equal population means
+
+$\sigma_{1}^{2}\ne\sigma_{2}^{2}$ The two populations do not have equal population means
+
+
+##### ii)
+
+```{r}
+organic = c(4.83,5.50,6.33,6.33,5.67,6.17,5.50,5.00,5.00,6.33,6.17,4.83,4.67,5.50,5.83,4.67,6.17,5.33,6.17,5.67)
+control = c(5.33,5.67,5.33,5.17,5.67,5.67,3.83,5.33,4.67,4.83,5.33,3.83,5.33,5.33,4.33,5.50,5.17,6.17,4.83,4.33)
+comfort = c(5.83,5.00,6.00,5.00,4.17,4.67,5.17,5.50,4.67,4.50,5.17,5.17,4.50,4.67,4.83,5.83,5.17,4.33,4.67,4.33,4.67,3.67)
+
+ss1=var(control); ss2=var(comfort)
+
+n1=length(control); n2=length(comfort)
+
+t=( mean(control)-mean(comfort))/sqrt(ss1/n1+ss2/n2)
+```
+
+```{r, echo=FALSE}
+cat("Testing Statistic:",t)
+
+cat("The null distribution is a T distribution with degree of freedom ", n1+n2-2, " (# of control + # of comfort - 2)")
+```
+
+##### iii)
+
+```{r}
+t.test(control,comfort,alternative =c("two.sided"), paired =FALSE ,var.equal = TRUE)
+```
+
+```{r, echo=FALSE}
+cat("Since the p-value (0.2959) is greater than the typical significance level of 0.05, we fail to reject the null hypothesis.")
+```
+
+##### iv)
+
+```{r, echo=FALSE}
+cat("This means there is not enough statistical evidence to conclude that there is a significant difference in the means of the two populations.")
+```     
+
+
+### Question 3
+
+#### i)
+
+$p_1 = p_2$ The two populations have equal population proportions.
+
+$p_1\ne p_2$ The two populations do not have equal population proportions.
+
+#### ii)
+
+```{r}
+organic = c(4.83,5.50,6.33,6.33,5.67,6.17,5.50,5.00,5.00,6.33,6.17,4.83,4.67,5.50,5.83,4.67,6.17,5.33,6.17,5.67)
+control = c(5.33,5.67,5.33,5.17,5.67,5.67,3.83,5.33,4.67,4.83,5.33,3.83,5.33,5.33,4.33,5.50,5.17,6.17,4.83,4.33)
+comfort = c(5.83,5.00,6.00,5.00,4.17,4.67,5.17,5.50,4.67,4.50,5.17,5.17,4.50,4.67,4.83,5.83,5.17,4.33,4.67,4.33,4.67,3.67)
+
+controlbinary = ifelse(control>4.75,1,0)
+comfortbinary = ifelse(comfort>4.75,1,0)
+
+mean1 = mean(controlbinary)
+mean2 = mean(comfortbinary)
+ptotal = (15+11)/(20+22)
+z = (mean1-mean2)/(sqrt(ptotal*(1 - ptotal)*((1/20)+(1/22))))
+```
+
+```{r, echo=FALSE}
+cat("Testing Statistic:",z)
+
+cat("The null distribution is a Z (Normal) distribution.")
+```
+
+#### iii)
+```{r}
+successes = c(15,11)
+total= c(20,22)
+prop.test(successes,total, alternative =c("two.sided"),conf.level=0.95, correct=FALSE)
+```
+
+```{r, echo=FALSE}
+cat("Since the p-value (0.0957) is greater than the typical significance level of 0.05, we fail to reject the null hypothesis.")
+```
+
+#### iv)
+
+```{r, echo=FALSE}
+cat(" Since the P-value is greater than the common alpha level of 0.05, we do not reject the null hypothesis. This suggests that there is not enough statistical evidence to say there is a significant difference between the proportions of observations greater than 4.75 in the Control and Comfort groups.")
+```     

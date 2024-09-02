@@ -1,0 +1,13 @@
+---
+title: "Sample Test"
+author: "Harry Wang"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r}
+library(readxl)
+GpaGender = read_excel("./GpaGender.xls")
+n = length(GpaGender$GPA)
+n
+```
